@@ -14,6 +14,10 @@ export class UsersService {
     return this.userModel.findOne({ email: email });
   }
 
+  async findById(id: string): Promise<User> {
+    return this.userModel.findById(id);
+  }
+
   async create(createUserDto: CreateUserDto): Promise<User> {
     const createdUser = new this.userModel(createUserDto);
     return createdUser.save();
@@ -21,5 +25,17 @@ export class UsersService {
 
   async findAll(): Promise<User[]> {
     return this.userModel.find().exec();
+  }
+
+  async edit(id: string, createUserDto: CreateUserDto): Promise<User> {
+    const updatedUser = await this.userModel.findByIdAndUpdate(
+      id,
+      createUserDto,
+    );
+    return updatedUser.save();
+  }
+
+  async delete(id: string): Promise<User> {
+    return this.userModel.findByIdAndDelete(id);
   }
 }
