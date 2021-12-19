@@ -57,10 +57,25 @@ export class UsersController {
       firstName: string;
       lastName: string;
       email: string;
-      password: string;
+      phoneNumber: string;
     },
   ): Promise<User> {
     return this.usersService.edit(id, putData);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Put('')
+  async updateOwnDetails(
+    @Request() req,
+    @Body()
+    putData: {
+      firstName: string;
+      lastName: string;
+      email: string;
+      phoneNumber: string;
+    },
+  ): Promise<User> {
+    return this.usersService.edit(req.user.id, putData);
   }
 
   @UseGuards(JwtAuthGuard)

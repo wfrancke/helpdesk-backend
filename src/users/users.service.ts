@@ -1,7 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { Model } from 'mongoose';
-import { User } from '../interfaces/user.interface';
-import { CreateUserDto } from '../dto/user.dto';
+
+import { User, Role } from '../interfaces/user.interface';
+import { CreateUserDto, EditUserDetailsDto } from '../dto/user.dto';
 
 @Injectable()
 export class UsersService {
@@ -19,7 +20,10 @@ export class UsersService {
   }
 
   async create(createUserDto: CreateUserDto): Promise<User> {
-    const createdUser = new this.userModel(createUserDto);
+    const createdUser = new this.userModel({
+      role: Role.User,
+      ...createUserDto,
+    });
     return createdUser.save();
   }
 
@@ -27,10 +31,13 @@ export class UsersService {
     return this.userModel.find().exec();
   }
 
-  async edit(id: string, createUserDto: CreateUserDto): Promise<User> {
+  async edit(
+    id: string,
+    editUserDetailsDto: EditUserDetailsDto,
+  ): Promise<User> {
     const updatedUser = await this.userModel.findByIdAndUpdate(
       id,
-      createUserDto,
+      editUserDetailsDto,
     );
     return updatedUser.save();
   }
