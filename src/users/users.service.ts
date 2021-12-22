@@ -1,14 +1,17 @@
 import { Inject, Injectable } from '@nestjs/common';
+import { SentMessageInfo } from 'nodemailer';
 import { Model } from 'mongoose';
 
 import { User, Role } from '../interfaces/user.interface';
 import { CreateUserDto, EditUserDetailsDto } from '../dto/user.dto';
+import { MailService } from 'src/mail/mail.service';
 
 @Injectable()
 export class UsersService {
   constructor(
     @Inject('USER_MODEL')
     private userModel: Model<User>,
+    private mailService: MailService,
   ) {}
 
   async findOne(email: string): Promise<User> {
@@ -44,5 +47,17 @@ export class UsersService {
 
   async delete(id: string): Promise<User> {
     return this.userModel.findByIdAndDelete(id);
+  }
+
+  async findTeamManager(teamId: string): Promise<User> {
+    return this.userModel.findOne({ teamId: teamId, role: Role.Manager });
+  }
+
+  async sendConfirmationMail(
+    email: string,
+    name: string,
+    id: string,
+  ): Promise<SentMessageInfo> {
+    return this.mailService.sendUserConfirmation(email, name, id);
   }
 }

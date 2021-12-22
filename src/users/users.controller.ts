@@ -9,6 +9,8 @@ import {
   Param,
   Delete,
 } from '@nestjs/common';
+import { SentMessageInfo } from 'nodemailer';
+
 import { User } from '../interfaces/user.interface';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { UsersService } from './users.service';
@@ -82,5 +84,21 @@ export class UsersController {
   @Delete(':id')
   async deleteUser(@Param('id') id: string): Promise<User> {
     return this.usersService.delete(id);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('/assign/:id')
+  async requestTeamAssignment(
+    @Request() req,
+    @Param('id') teamId: string,
+  ): Promise<SentMessageInfo> {
+    const managerMail = await (
+      await this.usersService.findTeamManager(teamId)
+    ).email;
+    return this.usersService.sendConfirmationMail(
+      managerMail,
+      req.user.lastName,
+      req.user.id,
+    );
   }
 }

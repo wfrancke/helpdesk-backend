@@ -14,4 +14,5 @@ export interface User extends Document {
   readonly password: string;
   readonly role: Role;
   readonly phoneNumber: string;
+  readonly teamId: string;
 }
