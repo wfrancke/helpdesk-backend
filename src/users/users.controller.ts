@@ -51,21 +51,6 @@ export class UsersController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Put(':id')
-  async updateUser(
-    @Param('id') id: string,
-    @Body()
-    putData: {
-      firstName: string;
-      lastName: string;
-      email: string;
-      phoneNumber: string;
-    },
-  ): Promise<User> {
-    return this.usersService.edit(id, putData);
-  }
-
-  @UseGuards(JwtAuthGuard)
   @Put('')
   async updateOwnDetails(
     @Request() req,
@@ -75,6 +60,18 @@ export class UsersController {
       lastName: string;
       email: string;
       phoneNumber: string;
+    },
+  ): Promise<User> {
+    return this.usersService.edit(req.user.id, putData);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Put('password')
+  async updatePassword(
+    @Request() req,
+    @Body()
+    putData: {
+      password: string;
     },
   ): Promise<User> {
     return this.usersService.edit(req.user.id, putData);
@@ -92,13 +89,20 @@ export class UsersController {
     @Request() req,
     @Param('id') teamId: string,
   ): Promise<SentMessageInfo> {
-    const managerMail = await (
-      await this.usersService.findTeamManager(teamId)
-    ).email;
+    const managerMail = (await this.usersService.findTeamManager(teamId)).email;
     return this.usersService.sendConfirmationMail(
       managerMail,
       req.user.lastName,
       req.user.id,
+      teamId,
     );
+  }
+
+  @Get('confirm/:userId/to/:teamId')
+  async confirmUser(
+    @Param('userId') userId: string,
+    @Param('teamId') teamId: string,
+  ): Promise<User> {
+    return this.usersService.setEmployee(teamId, userId);
   }
 }

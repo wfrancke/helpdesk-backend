@@ -6,8 +6,9 @@ export interface CreateUserDto {
 }
 
 export interface EditUserDetailsDto {
-  firstName: string;
-  lastName: string;
-  email: string;
-  phoneNumber: string;
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  phoneNumber?: string;
+  password?: string;
 }

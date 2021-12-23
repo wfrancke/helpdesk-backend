@@ -56,8 +56,16 @@ export class UsersService {
   async sendConfirmationMail(
     email: string,
     name: string,
-    id: string,
+    userId: string,
+    teamId: string,
   ): Promise<SentMessageInfo> {
-    return this.mailService.sendUserConfirmation(email, name, id);
+    return this.mailService.sendUserConfirmation(email, name, userId, teamId);
+  }
+
+  async setEmployee(teamId: string, userId: string): Promise<User> {
+    return this.userModel.findByIdAndUpdate(userId, {
+      teamId,
+      role: Role.Employee,
+    });
   }
 }

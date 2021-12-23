@@ -9,9 +9,10 @@ export class MailService {
   async sendUserConfirmation(
     email: string,
     name: string,
-    id: string,
+    userId: string,
+    teamId: string,
   ): Promise<SentMessageInfo> {
-    const url = `192.168.1.4:3000/users/confirm/${id}`;
+    const url = `http://192.168.1.4:3000/users/confirm/${userId}/to/${teamId}`;
 
     return this.mailerService.sendMail({
       to: email,
