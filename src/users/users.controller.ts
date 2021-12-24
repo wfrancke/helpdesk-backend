@@ -9,7 +9,6 @@ import {
   Param,
   Delete,
 } from '@nestjs/common';
-import { SentMessageInfo } from 'nodemailer';
 
 import { User } from '../interfaces/user.interface';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
@@ -84,18 +83,24 @@ export class UsersController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Post('/assign/:id')
+  @Post('assign')
   async requestTeamAssignment(
     @Request() req,
-    @Param('id') teamId: string,
-  ): Promise<SentMessageInfo> {
-    const managerMail = (await this.usersService.findTeamManager(teamId)).email;
-    return this.usersService.sendConfirmationMail(
+    @Body()
+    postData: {
+      teamId: string;
+    },
+  ): Promise<string> {
+    const managerMail = (
+      await this.usersService.findTeamManager(postData.teamId)
+    ).email;
+    const response = await this.usersService.sendConfirmationMail(
       managerMail,
       req.user.lastName,
       req.user.id,
-      teamId,
+      postData.teamId,
     );
+    return response.response;
   }
 
   @Get('confirm/:userId/to/:teamId')
