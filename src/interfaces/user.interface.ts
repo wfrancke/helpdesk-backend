@@ -15,4 +15,5 @@ export interface User extends Document {
   readonly role: Role;
   readonly phoneNumber: string;
   readonly teamId: string;
+  readonly specialty: string[];
 }

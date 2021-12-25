@@ -8,4 +8,5 @@ export const UserSchema = new mongoose.Schema({
   role: { type: String, required: true },
   phoneNumber: String,
   teamId: String,
+  specialty: [String],
 });

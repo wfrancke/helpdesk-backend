@@ -36,7 +36,7 @@ export class UsersController {
     return this.usersService.findAll();
   }
 
-  @Post('')
+  @Post()
   async createUser(
     @Body()
     postData: {
@@ -50,7 +50,7 @@ export class UsersController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Put('')
+  @Put()
   async updateOwnDetails(
     @Request() req,
     @Body()
@@ -71,6 +71,18 @@ export class UsersController {
     @Body()
     putData: {
       password: string;
+    },
+  ): Promise<User> {
+    return this.usersService.edit(req.user.id, putData);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Put('specialty')
+  async updateSpecialty(
+    @Request() req,
+    @Body()
+    putData: {
+      specialty: string[];
     },
   ): Promise<User> {
     return this.usersService.edit(req.user.id, putData);

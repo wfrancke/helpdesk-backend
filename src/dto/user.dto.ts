@@ -11,4 +11,5 @@ export interface EditUserDetailsDto {
   email?: string;
   phoneNumber?: string;
   password?: string;
+  specialty?: string[];
 }
