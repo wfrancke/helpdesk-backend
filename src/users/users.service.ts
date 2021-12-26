@@ -68,4 +68,12 @@ export class UsersService {
       role: Role.Employee,
     });
   }
+
+  async findEmployees(): Promise<User[]> {
+    return this.userModel.find({ role: { $ne: Role.User } });
+  }
+
+  async findTeamMembers(teamId: string): Promise<User[]> {
+    return this.userModel.find({ teamId: teamId, role: Role.Employee });
+  }
 }

@@ -27,6 +27,7 @@ export class AuthService {
       role: user.role,
       phoneNumber: user.phoneNumber,
       specialty: user.specialty,
+      teamId: user.teamId,
     };
     return {
       accessToken: this.jwtService.sign(payload),

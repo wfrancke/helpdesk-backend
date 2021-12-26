@@ -25,7 +25,7 @@ export class UsersController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Get(':id')
+  @Get('id/:id')
   async getUser(@Param('id') id: string): Promise<User> {
     return this.usersService.findById(id);
   }
@@ -73,6 +73,7 @@ export class UsersController {
       password: string;
     },
   ): Promise<User> {
+    console.log(req.user);
     return this.usersService.edit(req.user.id, putData);
   }
 
@@ -121,5 +122,11 @@ export class UsersController {
     @Param('teamId') teamId: string,
   ): Promise<User> {
     return this.usersService.setEmployee(teamId, userId);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('team')
+  async getTeamMembers(@Request() req): Promise<User[]> {
+    return this.usersService.findTeamMembers(req.user.teamId);
   }
 }
