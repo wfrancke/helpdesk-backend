@@ -13,7 +13,7 @@ import { join } from 'path';
         secure: true,
         auth: {
           user: 'apikey',
-          pass: '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',
+          pass: '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',
         },
       },
       defaults: {

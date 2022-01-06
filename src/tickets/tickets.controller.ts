@@ -8,6 +8,7 @@ import {
   Put,
   Param,
 } from '@nestjs/common';
+import { AddCommentDto } from 'src/dto/ticket.dto';
 
 import { Priority, Status, Ticket } from 'src/interfaces/ticket.interface';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
@@ -84,5 +85,15 @@ export class TicketsController {
     },
   ): Promise<Ticket> {
     return this.ticketsService.edit(id, putData);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Put(':id/comment/')
+  async addComment(
+    @Param('id') id: string,
+    @Body()
+    putData: AddCommentDto,
+  ): Promise<Ticket> {
+    return this.ticketsService.addComment(id, putData);
   }
 }

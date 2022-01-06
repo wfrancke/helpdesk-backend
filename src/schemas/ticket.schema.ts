@@ -10,4 +10,12 @@ export const TicketSchema = new mongoose.Schema({
   fillingDate: { type: Date, required: true },
   finishDate: Date,
   tags: { type: [String], required: true },
+  comments: [
+    {
+      content: { type: String, required: true },
+      sender: { type: String, required: true },
+      date: { type: Date, required: true },
+      isPublic: { type: Boolean, required: true },
+    },
+  ],
 });

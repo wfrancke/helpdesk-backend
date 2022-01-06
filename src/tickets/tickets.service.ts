@@ -1,7 +1,11 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { Model } from 'mongoose';
 
-import { CreateTicketDto, EditTicketDto } from 'src/dto/ticket.dto';
+import {
+  CreateTicketDto,
+  EditTicketDto,
+  AddCommentDto,
+} from 'src/dto/ticket.dto';
 import { Ticket, Status } from 'src/interfaces/ticket.interface';
 import { UsersService } from 'src/users/users.service';
 
@@ -60,5 +64,14 @@ export class TicketsService {
       }
     });
     return assignee.id;
+  }
+
+  async addComment(
+    ticketId: string,
+    addCommentDto: AddCommentDto,
+  ): Promise<Ticket> {
+    const updatedTicket = await this.ticketModel.findById(ticketId);
+    updatedTicket.comments.push(addCommentDto);
+    return updatedTicket.save();
   }
 }

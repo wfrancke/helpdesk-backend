@@ -15,3 +15,10 @@ export interface EditTicketDto {
   tags?: string[];
   status?: Status;
 }
+
+export interface AddCommentDto {
+  content: string;
+  date: Date;
+  sender: string;
+  isPublic: boolean;
+}

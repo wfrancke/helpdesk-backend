@@ -11,6 +11,13 @@ export enum Priority {
   Critical = 'critical',
 }
 
+export interface Comment {
+  readonly content: string;
+  readonly sender: string;
+  readonly date: Date;
+  readonly isPublic: boolean;
+}
+
 export interface Ticket extends Document {
   readonly id: string;
   readonly title: string;
@@ -22,4 +29,5 @@ export interface Ticket extends Document {
   readonly fillingDate: Date;
   readonly finishDate: Date;
   readonly tags: string[];
+  readonly comments: Comment[];
 }
