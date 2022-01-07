@@ -88,7 +88,7 @@ export class TicketsController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Put(':id/comment/')
+  @Put('/comment/:id')
   async addComment(
     @Param('id') id: string,
     @Body()
