@@ -73,7 +73,6 @@ export class UsersController {
       password: string;
     },
   ): Promise<User> {
-    console.log(req.user);
     return this.usersService.edit(req.user.id, putData);
   }
 

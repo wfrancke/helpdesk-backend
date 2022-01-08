@@ -1,6 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { SentMessageInfo } from 'nodemailer';
 import { Model } from 'mongoose';
+import * as bcrypt from 'bcrypt';
 
 import { User, Role } from '../interfaces/user.interface';
 import { CreateUserDto, EditUserDetailsDto } from '../dto/user.dto';
@@ -23,8 +24,11 @@ export class UsersService {
   }
 
   async create(createUserDto: CreateUserDto): Promise<User> {
+    const saltRounds = 10;
+    const hash = await bcrypt.hash(createUserDto.password, saltRounds);
     const createdUser = new this.userModel({
       role: Role.User,
+      password: hash,
       ...createUserDto,
     });
     return createdUser.save();
@@ -38,6 +42,14 @@ export class UsersService {
     id: string,
     editUserDetailsDto: EditUserDetailsDto,
   ): Promise<User> {
+    if (editUserDetailsDto.password) {
+      const saltRounds = 10;
+      const hash = await bcrypt.hash(editUserDetailsDto.password, saltRounds);
+      const updatedUser = await this.userModel.findByIdAndUpdate(id, {
+        password: hash,
+      });
+      return updatedUser.save();
+    }
     const updatedUser = await this.userModel.findByIdAndUpdate(
       id,
       editUserDetailsDto,
