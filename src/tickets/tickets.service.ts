@@ -23,7 +23,10 @@ export class TicketsService {
 
   async create(createTicketDto: CreateTicketDto): Promise<Ticket> {
     const createdTicket = new this.ticketModel({
-      assignedId: await this.assign(createTicketDto.tags),
+      assignedId: await this.assign(
+        createTicketDto.requesterId,
+        createTicketDto.tags,
+      ),
       fillingDate: new Date(),
       status: Status.Open,
       ...createTicketDto,
@@ -53,8 +56,8 @@ export class TicketsService {
     return counter;
   }
 
-  async assign(tags: string[]): Promise<string> {
-    const employees = await this.userService.findEmployees();
+  async assign(requesterId: string, tags: string[]): Promise<string> {
+    const employees = await this.userService.findEmployees(requesterId);
     let assignee = employees[Math.floor(Math.random() * employees.length)];
     employees.forEach((emp) => {
       if (
