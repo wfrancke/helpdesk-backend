@@ -6,8 +6,13 @@ import {
   EditTicketDto,
   AddCommentDto,
 } from 'src/dto/ticket.dto';
-import { Ticket, Status } from 'src/interfaces/ticket.interface';
+import { Ticket, Status, Priority } from 'src/interfaces/ticket.interface';
 import { UsersService } from 'src/users/users.service';
+
+interface Stat {
+  name: string;
+  value: string;
+}
 
 @Injectable()
 export class TicketsService {
@@ -76,5 +81,66 @@ export class TicketsService {
     const updatedTicket = await this.ticketModel.findById(ticketId);
     updatedTicket.comments.push(addCommentDto);
     return updatedTicket.save();
+  }
+
+  async getTicketsQuantityStats(
+    teamId: string,
+    isOpen: boolean,
+    priority?: Priority,
+  ): Promise<Stat[]> {
+    const stats: Stat[] = [];
+    const employees = await this.userService.findTeamMembers(teamId);
+    employees.forEach(async (emp) => {
+      const tickets = priority
+        ? await this.ticketModel.find({
+            assignedId: emp._id,
+            status: isOpen ? Status.Open : Status.Closed,
+            priority: priority,
+          })
+        : await this.ticketModel.find({
+            assignedId: emp._id,
+            status: isOpen ? Status.Open : Status.Closed,
+          });
+      console.log({
+        name: `${emp.firstName} ${emp.lastName}`,
+        value: tickets.length.toString(),
+      });
+    });
+    return stats;
+  }
+
+  getTicketRealizationAverage(tickets: Ticket[]): string {
+    let time = 0;
+    tickets.forEach((ticket) => {
+      time +=
+        (ticket.finishDate.getTime() - ticket.fillingDate.getTime()) /
+        (1000 * 60 * 60 * 24);
+    });
+    return (time / tickets.length).toString();
+  }
+
+  async getTicketsSpeedStats(
+    teamId: string,
+    priority?: Priority,
+  ): Promise<Stat[]> {
+    const stats: Stat[] = [];
+    const employees = await this.userService.findTeamMembers(teamId);
+    employees.forEach(async (emp) => {
+      const tickets = priority
+        ? await this.ticketModel.find({
+            assignedId: emp._id,
+            status: Status.Closed,
+            priority: priority,
+          })
+        : await this.ticketModel.find({
+            assignedId: emp._id,
+            status: Status.Closed,
+          });
+      console.log({
+        name: `${emp.firstName} ${emp.lastName}`,
+        value: this.getTicketRealizationAverage(tickets),
+      });
+    });
+    return stats;
   }
 }
