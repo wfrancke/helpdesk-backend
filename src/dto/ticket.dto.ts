@@ -14,6 +14,7 @@ export interface EditTicketDto {
   priority?: Priority;
   tags?: string[];
   status?: Status;
+  finishDate?: Date;
 }
 
 export interface AddCommentDto {

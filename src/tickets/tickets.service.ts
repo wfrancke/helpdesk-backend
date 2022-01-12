@@ -9,7 +9,7 @@ import {
 import { Ticket, Status, Priority } from 'src/interfaces/ticket.interface';
 import { UsersService } from 'src/users/users.service';
 
-interface Stat {
+export interface Stat {
   name: string;
   value: string;
 }
@@ -90,7 +90,7 @@ export class TicketsService {
   ): Promise<Stat[]> {
     const stats: Stat[] = [];
     const employees = await this.userService.findTeamMembers(teamId);
-    employees.forEach(async (emp) => {
+    for (const emp of employees) {
       const tickets = priority
         ? await this.ticketModel.find({
             assignedId: emp._id,
@@ -101,11 +101,11 @@ export class TicketsService {
             assignedId: emp._id,
             status: isOpen ? Status.Open : Status.Closed,
           });
-      console.log({
+      stats.push({
         name: `${emp.firstName} ${emp.lastName}`,
         value: tickets.length.toString(),
       });
-    });
+    }
     return stats;
   }
 
@@ -116,7 +116,7 @@ export class TicketsService {
         (ticket.finishDate.getTime() - ticket.fillingDate.getTime()) /
         (1000 * 60 * 60 * 24);
     });
-    return (time / tickets.length).toString();
+    return (time / tickets.length).toFixed(1);
   }
 
   async getTicketsSpeedStats(
@@ -125,7 +125,7 @@ export class TicketsService {
   ): Promise<Stat[]> {
     const stats: Stat[] = [];
     const employees = await this.userService.findTeamMembers(teamId);
-    employees.forEach(async (emp) => {
+    for (const emp of employees) {
       const tickets = priority
         ? await this.ticketModel.find({
             assignedId: emp._id,
@@ -136,11 +136,11 @@ export class TicketsService {
             assignedId: emp._id,
             status: Status.Closed,
           });
-      console.log({
+      stats.push({
         name: `${emp.firstName} ${emp.lastName}`,
         value: this.getTicketRealizationAverage(tickets),
       });
-    });
+    }
     return stats;
   }
 }

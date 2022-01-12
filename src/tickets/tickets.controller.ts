@@ -12,7 +12,7 @@ import { AddCommentDto } from 'src/dto/ticket.dto';
 
 import { Priority, Status, Ticket } from 'src/interfaces/ticket.interface';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
-import { TicketsService } from './tickets.service';
+import { Stat, TicketsService } from './tickets.service';
 
 @Controller('tickets')
 export class TicketsController {
@@ -84,7 +84,16 @@ export class TicketsController {
       status: Status;
     },
   ): Promise<Ticket> {
-    return this.ticketsService.edit(id, putData);
+    if (putData.status === Status.Closed) {
+      return this.ticketsService.edit(id, {
+        finishDate: new Date(),
+        ...putData,
+      });
+    }
+    return this.ticketsService.edit(id, {
+      finishDate: null,
+      ...putData,
+    });
   }
 
   @UseGuards(JwtAuthGuard)
@@ -95,5 +104,49 @@ export class TicketsController {
     putData: AddCommentDto,
   ): Promise<Ticket> {
     return this.ticketsService.addComment(id, putData);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('stats/quantity/:status')
+  async getOverallQuantityStats(
+    @Request() req,
+    @Param('status') status: string,
+  ): Promise<Stat[]> {
+    return this.ticketsService.getTicketsQuantityStats(
+      req.user.teamId,
+      status === 'open' ? true : false,
+    );
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('stats/quantity/:status/:prio')
+  async getQuantityStats(
+    @Request() req,
+    @Param('status') status: string,
+    @Param('prio') prio: string,
+  ): Promise<Stat[]> {
+    return this.ticketsService.getTicketsQuantityStats(
+      req.user.teamId,
+      status === 'open' ? true : false,
+      prio as Priority,
+    );
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('stats/speed')
+  async getOverallSpeedStats(@Request() req): Promise<Stat[]> {
+    return this.ticketsService.getTicketsSpeedStats(req.user.teamId);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('stats/speed/:prio')
+  async getSpeedStats(
+    @Request() req,
+    @Param('prio') prio: string,
+  ): Promise<Stat[]> {
+    return this.ticketsService.getTicketsSpeedStats(
+      req.user.teamId,
+      prio as Priority,
+    );
   }
 }
