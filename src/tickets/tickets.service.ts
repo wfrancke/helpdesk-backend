@@ -27,6 +27,14 @@ export class TicketsService {
   }
 
   async create(createTicketDto: CreateTicketDto): Promise<Ticket> {
+    if (createTicketDto.assignedId) {
+      const createdTicket = new this.ticketModel({
+        fillingDate: new Date(),
+        status: Status.Open,
+        ...createTicketDto,
+      });
+      return createdTicket.save();
+    }
     const createdTicket = new this.ticketModel({
       assignedId: await this.assign(
         createTicketDto.requesterId,

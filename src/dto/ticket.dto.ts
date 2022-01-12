@@ -6,6 +6,7 @@ export interface CreateTicketDto {
   requesterId: string;
   priority: Priority;
   tags: string[];
+  assignedId?: string;
 }
 
 export interface EditTicketDto {
@@ -15,6 +16,7 @@ export interface EditTicketDto {
   tags?: string[];
   status?: Status;
   finishDate?: Date;
+  assignedId?: string;
 }
 
 export interface AddCommentDto {

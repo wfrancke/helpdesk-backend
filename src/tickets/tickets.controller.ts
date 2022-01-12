@@ -52,6 +52,7 @@ export class TicketsController {
       description: string;
       priority: Priority;
       tags: string[];
+      assignedId?: string;
     },
   ): Promise<Ticket> {
     return this.ticketsService.create({
@@ -70,6 +71,7 @@ export class TicketsController {
       description: string;
       priority: Priority;
       tags: string[];
+      assignedId?: string;
     },
   ): Promise<Ticket> {
     return this.ticketsService.edit(id, putData);
@@ -149,4 +151,16 @@ export class TicketsController {
       prio as Priority,
     );
   }
+
+  // @UseGuards(JwtAuthGuard)
+  // @Put('assigned/:id')
+  // async updateAssigned(
+  //   @Param('id') id: string,
+  //   @Body()
+  //   putData: {
+  //     assignedId: string;
+  //   },
+  // ): Promise<Ticket> {
+  //   return this.ticketsService.edit(id, putData);
+  // }
 }
